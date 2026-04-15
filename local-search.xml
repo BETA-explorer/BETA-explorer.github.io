@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>Arduino UNO 连接DHT11温湿度传感器</title>
+    <link href="/2026/04/14/Arduino-UNO-%E8%BF%9E%E6%8E%A5DHT11%E6%B8%A9%E6%B9%BF%E5%BA%A6%E4%BC%A0%E6%84%9F%E5%99%A8/"/>
+    <url>/2026/04/14/Arduino-UNO-%E8%BF%9E%E6%8E%A5DHT11%E6%B8%A9%E6%B9%BF%E5%BA%A6%E4%BC%A0%E6%84%9F%E5%99%A8/</url>
+    
+    <content type="html"><![CDATA[<p><u>大家好！&#x3D;)  </u></p><h2 id="今天的实验是：使用Arduino-UNO-R3-连接DHT11温度传感器"><a href="#今天的实验是：使用Arduino-UNO-R3-连接DHT11温度传感器" class="headerlink" title="今天的实验是：使用Arduino UNO R3 连接DHT11温度传感器"></a>今天的实验是：使用Arduino UNO R3 连接DHT11温度传感器</h2><table><thead><tr><th>实验材料</th><th>数量</th></tr></thead><tbody><tr><td>Arduino UNO R3</td><td>1</td></tr><tr><td>DHT11传感器</td><td>1</td></tr></tbody></table><h3 id="1-原理"><a href="#1-原理" class="headerlink" title="1.原理"></a>1.原理</h3><p>DHT11是一款<strong>数字温湿度复合传感器</strong>，内部主要包含两个核心元件：<strong>电阻式湿度感应元件和负温度系数(NTC)热敏电阻，以及一个内置微控制器(MCU)</strong>。湿度元件用于检测空气湿度变化，NTC热敏电阻用于测量环境温度。微控制器负责读取传感器信号、调用内部校准系数，并将温湿度数据转换为数字信号输出。</p><h3 id="2-连接硬件"><a href="#2-连接硬件" class="headerlink" title="2.连接硬件"></a>2.连接硬件</h3><table><thead><tr><th>DHT11传感器</th><th>Arduino UNO</th></tr></thead><tbody><tr><td>VCC</td><td>5&#x2F;3.3V</td></tr><tr><td>GND</td><td>GND</td></tr><tr><td>DATA</td><td>2</td></tr></tbody></table><h3 id="3-示例代码"><a href="#3-示例代码" class="headerlink" title="3. 示例代码"></a>3. 示例代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c_cpp">#include &lt;DHT.h&gt;  // 包含DHT传感器库<br><br>#define DHTPIN 2      // 定义DHT11的数据引脚连接到Arduino的2号引脚[reference:13][reference:14]<br>#define DHTTYPE DHT11 // 定义传感器的型号为DHT11[reference:15]<br><br>DHT dht(DHTPIN, DHTTYPE); // 初始化传感器对象<br><br>void setup() &#123;<br>  Serial.begin(9600);     // 启动串行通信，设置波特率为9600[reference:16]<br>  Serial.println(F(&quot;DHT11 温湿度传感器测试开始！&quot;));<br>  dht.begin();            // 初始化DHT11传感器<br>&#125;<br><br>void loop() &#123;<br>  delay(2000);            // 等待2秒，DHT11的读取频率不能太快[reference:17][reference:18]<br><br>  float h = dht.readHumidity();    // 读取湿度<br>  float t = dht.readTemperature(); // 读取摄氏温度<br><br>  // 检查数据读取是否失败<br>  if (isnan(h) || isnan(t)) &#123;<br>    Serial.println(F(&quot;错误：从DHT11传感器读取数据失败！&quot;));<br>    return;<br>  &#125;<br><br>  // 将温湿度数据打印到串口监视器<br>  Serial.print(F(&quot;湿度: &quot;));<br>  Serial.print(h);<br>  Serial.print(F(&quot;%\t&quot;));<br>  Serial.print(F(&quot;温度: &quot;));<br>  Serial.print(t);<br>  Serial.println(F(&quot;°C&quot;));<br>&#125;<br></code></pre></td></tr></table></figure><h3 id="4-上传与测试"><a href="#4-上传与测试" class="headerlink" title="4.上传与测试"></a>4.上传与测试</h3><ol><li>打开Arduino IDE，复制上面的示例代码到编辑器。</li><li>在 工具 → 开发板 中选择 Arduino Uno。</li><li>在 工具 → 端口 中选择正确的COM口</li><li>点击 上传 按钮（→图标）将程序写入Arduino。</li><li>上传成功后，打开 工具 → 串口监视器，将波特率设置为 9600。</li><li>观察串口监视器中数值的变化.</li></ol><p><em><strong>Happy Making! 🚀</strong></em>(完）</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>开发板/Arduino</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Arduino UNO 连接光敏传感器</title>
     <link href="/2026/04/13/Arduino-UNO-%E8%BF%9E%E6%8E%A5%E5%85%89%E6%95%8F%E4%BC%A0%E6%84%9F%E5%99%A8/"/>
     <url>/2026/04/13/Arduino-UNO-%E8%BF%9E%E6%8E%A5%E5%85%89%E6%95%8F%E4%BC%A0%E6%84%9F%E5%99%A8/</url>
